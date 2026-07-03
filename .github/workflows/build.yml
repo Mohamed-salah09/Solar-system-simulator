@@ -1,4 +1,4 @@
-name: C++ Build
+name: Build SFML Project
 
 on:
   push:
@@ -8,22 +8,25 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v4
+    - uses: actions/checkout@v4
 
-    - name: Install SFML
-      run: |
-        sudo apt update
-        sudo apt install -y libsfml-dev
+    - uses: msys2/setup-msys2@v2
+      with:
+        msystem: UCRT64
+        update: true
+        install: >
+          mingw-w64-ucrt-x86_64-gcc
+          mingw-w64-ucrt-x86_64-sfml
 
-    - name: Build Project
+    - name: Build
+      shell: msys2 {0}
       run: |
         g++ src/main.cpp src/planet.cpp \
         -Iheader \
-        -o solar-system \
+        -o app.exe \
         -lsfml-graphics \
         -lsfml-window \
         -lsfml-system
